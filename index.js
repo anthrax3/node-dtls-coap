@@ -1,4 +1,3 @@
-'use strict';
 /*
  * Copyright (c) 2013-2015 node-coap contributors.
  *
@@ -16,7 +15,7 @@ var optionsConv     = require('./lib/option_converter')
   , globalAgent     = new Agent({ type: 'udp4' })
   , globalAgentV6   = new Agent({ type: 'udp6' })
 
-module.exports.request = function(url) {
+module.exports.request = function(url,dtls) {
   var agent, req, ipv6
 
   if (typeof url === 'string')
@@ -24,16 +23,27 @@ module.exports.request = function(url) {
 
   ipv6 = net.isIPv6(url.hostname || url.host)
 
-  if (url.agent)
+  if (url.agent) {
     agent = url.agent
-  else if (url.agent === false && !ipv6)
+  }
+  else if (url.agent === false && !ipv6 && typeof(dtls) == "undefined") {
     agent = new Agent({ type: 'udp4' })
-  else if (url.agent === false && ipv6)
+  }
+  else if (url.agent === false && ipv6) {
     agent = new Agent({ type: 'udp6' })
-  else if (ipv6)
+  }
+  else if (url.agent === false && !ipv6 && typeof(dtls) != "undefined") {
+    agent = new Agent({ type: 'udp4', dtls: dtls })
+  }
+  else if (ipv6) {
     agent = exports.globalAgentIPv6
-  else
+  }
+  else if (typeof(dtls) != "undefined") {
+    agent = new Agent({ type: 'udp4', dtls:dtls})
+  }
+  else {
     agent = exports.globalAgent
+  }
 
   return agent.request(url)
 }

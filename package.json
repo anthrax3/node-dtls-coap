@@ -41,6 +41,8 @@
     "debug": "^2.2.0",
     "fastseries": "^1.7.0",
     "lru-cache": "^4.0.0",
+    "node-dtls": "git://github.com/Rantanen/node-dtls",
+    "node-dtls-proxy": "git://github.com/m4n3dw0lf/node-dtls-proxy",
     "readable-stream": "^2.2.2"
   }
 }
