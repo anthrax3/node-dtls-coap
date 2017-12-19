@@ -49,8 +49,49 @@ If you need a command line interface for CoAP, check out
 $ npm install coap --save
 ```
 
+## DTLS Support
+
+by: [m4n3dw0lf](https://github.com/m4n3dw0lf)
+
+- Generate a key and certificate with the following openssl command:
+
+  `openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout cert.key -out cert.crt -subj '/CN=m4n3dw0lf/O=dtls/C=BR'`
+
+<a name="dtls-server"></a>
+### DTLS Server
+
+```js
+const coap    = require('../') // or coap
+    , server  = coap.createServer()
+
+server.on('request', function(req, res) {
+  res.end('Hello ' + req.url.split('/')[1] + '\n')
+})
+server.listen(null,null,"cert.key","cert.crt",function() {
+  console.log('COAP Server listening on port: 5683')
+})
+```
+
+<a name="dtls-client"></a>
+### DTLS Client
+
+
+```js
+dtls = {address:"localhost",port:5684,udpPort:5687}
+const coap  = require('../')
+    , req   = coap.request('coap://localhost/m4n3dw0lf',dtls)
+
+req.sender._port = dtls.udpPort
+
+req.on('response', function(res) {
+  res.pipe(process.stdout)
+})
+
+req.end()
+```
+
 <a name="basic"></a>
-## Basic Example
+## Basic Example (no-dtls)
 
 The following example opens a UDP server and sends a
 CoAP message to it:
@@ -552,6 +593,7 @@ __node-coap__ is only possible due to the excellent work of the following contri
 <tr><th align="left">Daniel Moran Jimenez</th><td><a href="https://github.com/dmoranj">GitHub/dmoranj</a></td><td><a href="https://twitter.com/erzeneca">Twitter/@erzeneca</a></td></tr>
 <tr><th align="left">Ignacio Martín</th><td><a href="https://github.com/neich">GitHub/neich</a></td><td><a href="https://twitter.com/natxupitxu">Twitter/@natxupitxu</a></td></tr>
 <tr><th align="left">Christopher Hiller</th><td><a href="https://github.com/boneskull">GitHub/boneskull</a></td><td><a href="https://twitter.com/b0neskull">Twitter/@b0neskull</a></td></tr>
+<tr><th align="left">Angelo Moura</th><td><a href="https://github.com/m4n3dw0lf">GitHub/m4n3dw0lf</a></td><td><a href="https://twitter.com/m4n3dw0lf">Twitter/@m4n3dw0lf</a></td></tr>
 </tbody></table>
 
 ## LICENSE
